@@ -1,14 +1,12 @@
 import React, { Component } from 'react';
-
 import {
   View,
   StyleSheet,
   Dimensions, TouchableOpacity, Text
 } from 'react-native';
-
 import MapView, { Marker } from 'react-native-maps';
 import geolocation from '@react-native-community/geolocation';
-
+import Custommarker from './src/components/imagecomponent';
 const { width, height } = Dimensions.get('window')
 
 const SCREEN_HEIGHT = height
@@ -31,14 +29,33 @@ class App extends Component {
         latitudeDelta: 0,
         longitudeDelta: 0,
       },
+      currentLoc: {
+        latitude: 0,
+        longitude: 0,
+        latitudeDelta: 0,
+        longitudeDelta: 0,
+      },
+      markers: [{
+        title: 'hello',
+        coordinates: {
+          latitude: 3.148561,
+          longitude: 101.652778
+        },
+      },
+      {
+        title: 'hello',
+        coordinates: {
+          latitude: 3.149771,
+          longitude: 101.655449
+        },
+      }]
     }
   }
 
   componentDidMount() {
     geolocation.getCurrentPosition((position) => {
-      var lat = parseFloat(position.coords.latitude)
-      var long = parseFloat(position.coords.longitude)
-
+      var lat = parseFloat(position.coords.latitude);
+      var long = parseFloat(position.coords.longitude);
       var initialRegion = {
         latitude: lat,
         longitude: long,
@@ -46,7 +63,7 @@ class App extends Component {
         longitudeDelta: LONGITUDE_DELTA,
       }
       console.log("initialRegion", initialRegion);
-      this.setState({ initialPosition: initialRegion })
+      this.setState({ initialPosition: initialRegion, })
     },
       (error) => alert(JSON.stringify(error)),
       { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 });
@@ -56,31 +73,38 @@ class App extends Component {
     this.setState({ initialPosition: region });
   }
 
-  changeLocation = () => {
-    var data = this.state.initialPosition;
-    this.setState({
-      markerData: { latitude: data.latitude, longitude: data.longitude },
-      initialPosition: data
-    })
-  }
 
 
   renderScreen = () => {
-    console.log('region', this.state.initialPosition);
+    //console.log('region', this.state.initialPosition);
     return (
       <View style={styles.container}>
         <MapView
           showsUserLocation={true}
+          showsMyLocationButton
           style={styles.map}
+          zoomEnabled={true}
+          followUserLocation={true}
           initialRegion={this.state.initialPosition}
           onRegionChange={region => this.setState({ initialPosition: region })}
-          onRegionChangeComplete={this.changeLocation}
+          onRegionChangeComplete={region => this.setState({ initialPosition: region })}
         >
           <MapView.Marker
-            draggable
+            draggable={true}
             pinColor={'green'}
-            coordinate={this.state.markerData}
-          />
+            coordinate={this.state.initialPosition}
+          >
+            <Custommarker />
+          </MapView.Marker>
+          {/* {this.state.markers.map((marker,index) => (
+            <MapView.Marker
+              key={index}
+              coordinate={marker.coordinates}
+              title={marker.title}
+            >
+              <Custommarker />
+            </MapView.Marker>
+          ))} */}
         </MapView>
         <View style={{
           position: 'absolute',
@@ -93,13 +117,25 @@ class App extends Component {
               backgroundColor: '#fff', display: 'flex', borderRadius: 25, shadowColor: '#2AC062',
               shadowOpacity: 0.4, shadowRadius: 20, shadowOffset: { height: 10, width: 5 },
             }}
-            onPress={() => this.changeLocation()}>
+            onPress={() => alert('button pressed.')}>
             <Text style={{ color: 'green', textAlign: 'center', fontSize: 25 }}>+</Text>
           </TouchableOpacity>
         </View>
       </View>
     );
   }
+
+  // changeLocation = () => {
+  //   var data = this.state.initialPosition;
+  //   var changesdata = {
+  //     latitude: data.latitude,
+  //     longitude: data.longitude
+  //   }
+  //   this.setState({
+  //     markerData: changesdata,
+  //     initialPosition: this.state.currentLoc
+  //   })
+  // }
 
   render() {
     return (
