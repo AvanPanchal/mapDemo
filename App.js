@@ -38,15 +38,15 @@ class App extends Component {
       markers: [{
         title: 'hello',
         coordinates: {
-          latitude: 3.148561,
-          longitude: 101.652778
+          latitude: 23.036739,
+          longitude: 72.654466
         },
       },
       {
         title: 'hello',
         coordinates: {
-          latitude: 3.149771,
-          longitude: 101.655449
+          latitude: 23.036255,
+          longitude: 72.656188
         },
       }]
     }
@@ -64,14 +64,15 @@ class App extends Component {
       }
       console.log("initialRegion", initialRegion);
       this.setState({ initialPosition: initialRegion, })
+      // this.setState({ currentLoc: initialRegion, })
     },
       (error) => alert(JSON.stringify(error)),
       { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 });
   }
 
-  onregionchange(region) {
-    this.setState({ initialPosition: region });
-  }
+  // onregionchange(region) {
+  //   this.setState({ initialPosition: region });
+  // }
 
 
 
@@ -81,22 +82,22 @@ class App extends Component {
       <View style={styles.container}>
         <MapView
           showsUserLocation={true}
-          showsMyLocationButton
           style={styles.map}
           zoomEnabled={true}
           followUserLocation={true}
-          initialRegion={this.state.initialPosition}
-          onRegionChange={region => this.setState({ initialPosition: region })}
-          onRegionChangeComplete={region => this.setState({ initialPosition: region })}
+          loadingIndicatorColor='#4dd'
+        // initialRegion={this.state.initialPosition}
+        // onRegionChange={region => this.setState({ initialPosition: region })}
+        // onRegionChangeComplete={region => this.setState({ initialPosition: region })}
         >
-          <MapView.Marker
+          {/* <MapView.Marker
             draggable={true}
             pinColor={'green'}
             coordinate={this.state.initialPosition}
           >
             <Custommarker />
-          </MapView.Marker>
-          {/* {this.state.markers.map((marker,index) => (
+          </MapView.Marker> */}
+          {this.state.markers.map((marker, index) => (
             <MapView.Marker
               key={index}
               coordinate={marker.coordinates}
@@ -104,7 +105,7 @@ class App extends Component {
             >
               <Custommarker />
             </MapView.Marker>
-          ))} */}
+          ))}
         </MapView>
         <View style={{
           position: 'absolute',
@@ -117,7 +118,7 @@ class App extends Component {
               backgroundColor: '#fff', display: 'flex', borderRadius: 25, shadowColor: '#2AC062',
               shadowOpacity: 0.4, shadowRadius: 20, shadowOffset: { height: 10, width: 5 },
             }}
-            onPress={() => alert('button pressed.')}>
+            onPress={() => this.state.currentLoc}>
             <Text style={{ color: 'green', textAlign: 'center', fontSize: 25 }}>+</Text>
           </TouchableOpacity>
         </View>
